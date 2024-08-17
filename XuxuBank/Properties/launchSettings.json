@@ -18,10 +18,10 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
         "DB_HOST": "localhost",
-        "DB_USER": "pizzaiolo",
-        "DB_PASSWORD": "pizzaPassword",
-        "DB_PORT": "5434",
-        "DB_NAME": "pizza"
+        "DB_USER": "xuxubankuser",
+        "DB_PASSWORD": "xuxubankPassword",
+        "DB_PORT": "5435",
+        "DB_NAME": "xuxubank"
       }
     },
     "IIS Express": {

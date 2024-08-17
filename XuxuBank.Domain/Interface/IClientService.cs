@@ -3,5 +3,5 @@
 namespace XuxuBank.Domain.Interface;
 public interface IClientService
 {
-    Task<CreateTransactionResponseModel> Post(CreateTransactionModel Model);
+    Task<SimpleExtractModel> Post(CreateTransactionModel Model, long Id);
 }

@@ -3,5 +3,5 @@
 namespace XuxuBank.Domain.Interface;
 public interface IClientRepository
 {
-    Task<Guid> Insert(CreateTransactionModel Model);
+    Task<ClientModel> Get(long Id);
 }

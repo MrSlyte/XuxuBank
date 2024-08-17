@@ -11,6 +11,7 @@ internal static class DependencyInjection
     internal static void ConfigureDependencyInjection(this IServiceCollection services)
     {
         services.AddTransient<IClientRepository, ClientRepository>();
+        services.AddTransient<IClientTransactionRepository, ClientTransactionRepository>();
         services.AddTransient<IClientService, ClientService>();
         services.AddTransient<ClientsController>();
     }

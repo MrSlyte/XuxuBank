@@ -13,26 +13,32 @@ internal class ClientsController(IClientService clientService) : ControllerBase
     internal void Map(WebApplication app)
     {
         app.MapPost(PostRoute, Post);
+        app.MapGet(GetRoute, Get);
     }
 
-    private async Task<IResult> Post(CreateTransactionModel Model)
+    private async Task<IResult> Post([FromBody] CreateTransactionModel Model, [FromRoute] long Id)
     {
         try
         {
-            var resultModel = await _clientService.Post(Model);
+            var resultModel = await _clientService.Post(Model, Id);
             return Results.Ok(resultModel);
         }
         catch (ValidationException valEx)
         {
-            return Results.UnprocessableEntity(valEx.Errors);
+            return Results.UnprocessableEntity(valEx.Errors.Any() ? valEx.Errors.Select(x => x.ErrorMessage) : valEx.Message);
         }
-        catch(ArgumentOutOfRangeException)
+        catch(ArgumentOutOfRangeException notFoundEx)
         {
-            return Results.NotFound();
+            return Results.NotFound(notFoundEx.Message);
         }
         catch (Exception ex)
         {
             return Results.BadRequest(ex.ToString());
         }
+    }
+
+    private async Task<IResult> Get(int Id)
+    {
+        return Results.Ok($"Oi: {Id}");
     }
 }

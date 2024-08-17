@@ -1,6 +1,5 @@
-@XuxuBank_HostAddress = http://localhost:5114
+@XuxuBank_HostAddress = http://localhost:3001
 
-GET {{XuxuBank_HostAddress}}/weatherforecast/
-Accept: application/json
+GET {{XuxuBank_HostAddress}}/clientes/4/extrato
 
 ###

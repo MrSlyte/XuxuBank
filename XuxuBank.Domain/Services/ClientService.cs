@@ -5,18 +5,32 @@ using XuxuBank.Domain.Validation;
 
 namespace XuxuBank.Domain.Services;
 
-public class ClientService(IClientRepository personRepository) : IClientService
+public class ClientService(IClientRepository clientRepository, IClientTransactionRepository clientTransactionRepository) : IClientService
 {
-    private readonly IClientRepository _personRepository = personRepository;
+    private readonly IClientRepository _clientRepository = clientRepository;
+    private readonly IClientTransactionRepository _clientTransactionRepository = clientTransactionRepository;
 
-    public async Task<CreateTransactionResponseModel> Post(CreateTransactionModel Model)
+    public async Task<SimpleExtractModel> Post(CreateTransactionModel Model, long Id)
     {
-        var validator = await (new CreateTransactionModelValidation(_personRepository)).ValidateAsync(Model);
-        if (!validator.IsValid)
-            throw new ValidationException(validator.Errors);
+        var validModel = new ClientTransactionValidationModel(Id, Model.Valor, Model.Tipo, Model.Descricao);
 
-        var resultGuid = await _personRepository.Insert(Model);
-        return new CreateTransactionResponseModel(0, 0);
+        var clientValidation = await (new ClientModelValidation(_clientRepository)).ValidateAsync(new ClientModel(Id, string.Empty, 0));
+        if (!clientValidation.IsValid)
+            throw new ArgumentOutOfRangeException(clientValidation.Errors[0].ErrorMessage);
+
+        var transactionValidation = await (new CreateTransactionModelValidation(_clientTransactionRepository)).ValidateAsync(validModel);
+        if (!transactionValidation.IsValid)
+            throw new ValidationException(transactionValidation.Errors);
+
+        if (Model.Tipo.Equals("D", StringComparison.InvariantCultureIgnoreCase))
+            Model = new CreateTransactionModel(-Model.Valor, Model.Tipo, Model.Descricao);
+        var inserted = await _clientTransactionRepository.Insert(Model, Id);
+        if (inserted)
+        {
+            return await _clientTransactionRepository.SimpleExtractAsync(Id);
+        }
+        throw new ValidationException("Não consegui inserir a transação do cliente");
     }
 }
 
+ 
